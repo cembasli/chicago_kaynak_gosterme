@@ -93,7 +93,6 @@
     border: 1px solid var(--border2);
     border-radius: var(--radius);
     overflow: hidden;
-    transition: all 0.2s;
   }
 
   .key-panel-header {
@@ -121,7 +120,6 @@
     height: 8px;
     border-radius: 50%;
     background: var(--red);
-    transition: background 0.2s;
   }
 
   .key-dot.active {
@@ -193,7 +191,6 @@
     font-family: 'DM Sans', monospace;
     color: var(--text);
     outline: none;
-    transition: border-color 0.15s;
     letter-spacing: 0.04em;
   }
 
@@ -216,7 +213,6 @@
     border: 1px solid var(--border2);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.15s;
     white-space: nowrap;
   }
 
@@ -240,7 +236,6 @@
     border-radius: var(--radius-sm);
     cursor: pointer;
     margin-top: 8px;
-    transition: all 0.15s;
   }
 
   .key-clear-btn:hover {
@@ -264,7 +259,6 @@
     font-family: 'DM Sans', sans-serif;
     color: var(--text);
     outline: none;
-    transition: border-color 0.15s;
   }
 
   .url-field:focus {
@@ -285,7 +279,6 @@
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
-    transition: opacity 0.15s;
     white-space: nowrap;
   }
 
@@ -380,7 +373,6 @@
     border-radius: var(--radius-sm);
     padding: 5px 12px;
     cursor: pointer;
-    transition: all 0.15s;
   }
 
   .copy-all-btn:hover {
@@ -446,7 +438,6 @@
     cursor: pointer;
     color: var(--text3);
     font-size: 14px;
-    transition: all 0.15s;
   }
 
   .cite-copy:hover {
@@ -530,7 +521,6 @@
     border-radius: 99px;
     padding: 5px 14px;
     cursor: pointer;
-    transition: all 0.15s;
   }
 
   .chip:hover {
@@ -546,6 +536,12 @@
     font-size: 12px;
     color: var(--text3);
     line-height: 1.6;
+  }
+
+  .version {
+    margin-top: 1rem;
+    font-size: 11px;
+    color: var(--text3);
   }
 
   @media (max-width: 560px) {
@@ -642,6 +638,7 @@
 
   <footer>
     Chicago Manual of Style 17. ve 18. baskı kurallarına göre oluşturulur. Akademik çalışmalarda atıfları her zaman kendiniz doğrulayın.
+    <div class="version">Version: 2026-04-28 — Model: gemini-2.5-flash</div>
   </footer>
 
 </div>
@@ -651,16 +648,8 @@
 
 let lastCopyText = '';
 
-/*
-  Model hatası çözümü:
-  Eski model: gemini-1.5-flash
-  Yeni model: gemini-2.0-flash
-  Eski endpoint: /v1beta/
-  Yeni endpoint: /v1/
-*/
-
 const GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1/models/';
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
 function getKey() {
   return sessionStorage.getItem('gemini_api_key') || '';
@@ -687,7 +676,6 @@ function saveKey() {
   setTimeout(() => {
     btn.textContent = 'Kaydet';
     btn.classList.remove('ok');
-
     document.getElementById('keyBody').classList.remove('open');
     document.getElementById('keyToggleBtn').textContent = 'Değiştir ▾';
   }, 1500);
@@ -712,11 +700,9 @@ function toggleKeyPanel() {
   const body = document.getElementById('keyBody');
   const isOpen = body.classList.toggle('open');
 
-  if (isOpen) {
-    document.getElementById('keyToggleBtn').textContent = 'Kapat ▴';
-  } else {
-    document.getElementById('keyToggleBtn').textContent = getKey() ? 'Değiştir ▾' : 'Ayarla ▾';
-  }
+  document.getElementById('keyToggleBtn').textContent = isOpen
+    ? 'Kapat ▴'
+    : (getKey() ? 'Değiştir ▾' : 'Ayarla ▾');
 }
 
 function tryExample(url) {
@@ -770,14 +756,84 @@ async function fetchPageContent(url) {
     const proxyRes = await fetch(proxyUrl);
 
     if (!proxyRes.ok) {
-      return '(Sayfa içeriği alınamadı, URL bilgisinden devam et.)';
+      return '(Sayfa içeriği alınamadı, yalnızca URL bilgisinden devam et.)';
     }
 
     const proxyData = await proxyRes.json();
-    return String(proxyData.contents || '').slice(0, 8000);
+    const html = String(proxyData.contents || '');
+
+    if (!html) {
+      return '(Sayfa içeriği boş geldi, yalnızca URL bilgisinden devam et.)';
+    }
+
+    return html.slice(0, 8000);
+
   } catch (e) {
-    return '(Sayfa içeriği alınamadı, URL bilgisinden devam et.)';
+    console.log('Page fetch error:', e);
+    return '(Sayfa içeriği alınamadı, yalnızca URL bilgisinden devam et.)';
   }
+}
+
+function buildPrompt(url, pageContent, today) {
+  return `
+Sen bir akademik atıf uzmanısın.
+
+Aşağıdaki URL ve sayfa içeriğine göre Chicago Manual of Style 17./18. baskı formatında kaynakça oluştur.
+
+URL:
+${url}
+
+SAYFA İÇERİĞİ:
+${pageContent}
+
+Görev:
+Kaynak türünü belirle ve Chicago formatında iki çıktı üret:
+1. Notes and Bibliography kaynakça girişi
+2. Author-Date kaynakça girişi
+
+Bulmaya çalış:
+- Yazar adı
+- Başlık
+- Yayın tarihi
+- Yayıncı / site adı
+- Dergi adı
+- Cilt
+- Sayı
+- Sayfa aralığı
+- DOI
+- URL
+
+ÇOK ÖNEMLİ:
+Sadece geçerli JSON döndür.
+Açıklama yazma.
+Markdown kod bloğu kullanma.
+JSON dışında hiçbir metin yazma.
+
+JSON şeması tam olarak şöyle olsun:
+
+{
+  "type": "Kaynak türü Türkçe",
+  "bibliography": "Chicago Notes and Bibliography kaynakça girişi",
+  "author_date": "Chicago Author-Date kaynakça girişi",
+  "detected": {
+    "authors": "Yazar(lar) veya boş string",
+    "title": "Başlık veya boş string",
+    "year": "Yıl veya boş string",
+    "publisher": "Yayıncı/Site veya boş string"
+  },
+  "note": "Eksik veya belirsiz bilgi varsa kısa not, yoksa boş string"
+}
+
+Kurallar:
+- Kitap, dergi, gazete ve site adlarını *yıldız* içine al.
+- Makale, bölüm, haber ve web sayfası başlıklarını çift tırnak içine al.
+- URL'yi kaynakça sonuna ekle.
+- Web sayfalarında gerekirse erişim tarihi kullan: ${today}.
+- Yazar bulunamazsa kurum/site adını kullan.
+- Hiçbir bilgiyi uydurma.
+- Tarih bulunamazsa yıl alanını boş bırak.
+- DOI yoksa DOI yazma.
+`;
 }
 
 async function handleSubmit() {
@@ -815,102 +871,93 @@ async function handleSubmit() {
       year: 'numeric'
     });
 
-    const prompt = `
-Sen bir akademik atıf uzmanısın. Aşağıdaki URL ve sayfa içeriğini analiz et.
+    const prompt = buildPrompt(url, pageContent, today);
 
-URL:
-${url}
-
-SAYFA İÇERİĞİ:
-${pageContent}
-
-Görev:
-Chicago Manual of Style 17./18. baskı formatında kaynakça oluştur.
-
-HTML içeriğinden şunları çıkar:
-- Yazar adı
-- Başlık
-- Yayın tarihi
-- Yayıncı / site adı
-- Dergi, cilt, sayı bilgisi
-- DOI
-- URL
-
-Kaynak türünü belirle:
-akademik makale, haber, web sayfası, kitap bölümü, dergi makalesi, blog yazısı vb.
-
-SADECE aşağıdaki JSON formatında yanıt ver.
-Başka hiçbir şey yazma.
-Markdown kod bloğu kullanma.
-
-{
-  "type": "Kaynak türü Türkçe",
-  "bibliography": "Chicago Notes and Bibliography kaynakça girişi",
-  "author_date": "Chicago Author-Date kaynakça girişi",
-  "detected": {
-    "authors": "Yazar(lar) veya boş string",
-    "title": "Başlık veya boş string",
-    "year": "Yıl veya boş string",
-    "publisher": "Yayıncı/Site veya boş string"
-  },
-  "note": "Eksik bilgi varsa kısa not, yoksa boş string"
-}
-
-Kurallar:
-- Kitap, dergi ve site adlarını *yıldız* içine al.
-- Makale, bölüm ve haber başlıklarını çift tırnak içine al.
-- URL'yi kaynakça sonuna ekle.
-- Gerekirse erişim tarihi kullan: ${today}.
-- Yazar bulunamazsa site adını veya kurum adını kullan.
-- Uydurma yazar, tarih, DOI veya dergi bilgisi ekleme.
-`;
+    const requestBody = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: prompt
+            }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 1600,
+        responseMimeType: 'application/json'
+      }
+    };
 
     const geminiRes = await fetch(geminiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.1,
-          maxOutputTokens: 1200
-        }
-      })
+      body: JSON.stringify(requestBody)
     });
 
+    const geminiData = await geminiRes.json().catch(() => null);
+
     if (!geminiRes.ok) {
-      const errData = await geminiRes.json().catch(() => ({}));
-      const apiMessage = errData.error && errData.error.message
-        ? errData.error.message
+      console.log('Gemini error response:', geminiData);
+
+      const apiMessage = geminiData?.error?.message
+        ? geminiData.error.message
         : `Gemini API hatası: HTTP ${geminiRes.status}`;
+
+      if (
+        apiMessage.includes('Quota exceeded') ||
+        apiMessage.includes('exceeded your current quota') ||
+        apiMessage.includes('rate limit')
+      ) {
+        throw new Error(
+          'Gemini API kota veya rate limit hatası. Google AI Studio’daki model kotanı ve API key’in bağlı olduğu projeyi kontrol et. Teknik mesaj: ' + apiMessage
+        );
+      }
 
       throw new Error(apiMessage);
     }
 
-    const geminiData = await geminiRes.json();
-    const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Gemini full response:', geminiData);
 
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    const candidate = geminiData?.candidates?.[0];
+    const rawText = candidate?.content?.parts?.[0]?.text || '';
 
-    if (!jsonMatch) {
-      throw new Error('Model geçerli JSON yanıtı döndürmedi. Lütfen tekrar deneyin.');
+    if (!rawText) {
+      console.log('Gemini raw response has no text:', geminiData);
+      throw new Error('Gemini boş yanıt döndürdü. Console içinde Gemini full response kontrol edin.');
     }
+
+    let cleanedText = rawText
+      .trim()
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```$/i, '')
+      .trim();
 
     let parsed;
 
     try {
-      parsed = JSON.parse(jsonMatch[0]);
+      parsed = JSON.parse(cleanedText);
     } catch (e) {
-      throw new Error('Model yanıtı JSON olarak okunamadı. Lütfen tekrar deneyin.');
+      console.log('Gemini raw text:', rawText);
+      console.log('Gemini cleaned text:', cleanedText);
+
+      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+
+      if (!jsonMatch) {
+        throw new Error('Model JSON dışında bir yanıt döndürdü. Console içinde Gemini raw text kontrol edin.');
+      }
+
+      try {
+        parsed = JSON.parse(jsonMatch[0]);
+      } catch (e2) {
+        console.log('JSON parse error:', e2);
+        throw new Error('Model yanıtı JSON formatına benziyor ama okunamadı. Console içinde raw text kontrol edin.');
+      }
     }
 
     renderResult(parsed);
