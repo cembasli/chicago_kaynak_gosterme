@@ -79,6 +79,126 @@
     line-height: 1.6;
   }
 
+  /* ── API KEY SETUP PANEL ── */
+  .key-panel {
+    margin-bottom: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .key-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .key-panel-header:hover { background: var(--surface2); }
+
+  .key-panel-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .key-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    transition: background 0.2s;
+  }
+  .key-dot.active { background: var(--green); }
+
+  .key-label { color: var(--text2); }
+  .key-status { color: var(--text3); font-size: 12px; }
+
+  .key-toggle {
+    font-size: 12px;
+    color: var(--text3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .key-toggle:hover { color: var(--text2); }
+
+  .key-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .key-body.open { display: block; }
+
+  .key-body p {
+    font-size: 12px;
+    color: var(--text3);
+    margin: 10px 0 8px;
+    line-height: 1.5;
+  }
+
+  .key-body a { color: var(--accent); text-decoration: none; }
+  .key-body a:hover { text-decoration: underline; }
+
+  .key-input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .key-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: 'DM Sans', monospace;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .key-input:focus { border-color: rgba(255,255,255,0.25); }
+  .key-input::placeholder { color: var(--text3); letter-spacing: 0; }
+
+  .key-save-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 18px;
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .key-save-btn:hover { border-color: rgba(255,255,255,0.25); }
+  .key-save-btn.ok { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+  .key-clear-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 4px 10px;
+    background: transparent;
+    color: var(--text3);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .key-clear-btn:hover { color: var(--red); border-color: rgba(192,84,58,0.3); }
+
+  /* ── MAIN FORM ── */
   .input-wrap {
     display: flex;
     gap: 8px;
@@ -304,6 +424,29 @@
     <p>Kaynağın linkini yapıştırın &mdash; kaynak türünü otomatik tespit edip Chicago formatında kaynakça oluşturalım.</p>
   </header>
 
+  <!-- API KEY PANEL -->
+  <div class="key-panel" id="keyPanel">
+    <div class="key-panel-header" onclick="toggleKeyPanel()">
+      <div class="key-panel-left">
+        <div class="key-dot" id="keyDot"></div>
+        <span class="key-label">Gemini API Key</span>
+        <span class="key-status" id="keyStatusText">— ayarlanmadı</span>
+      </div>
+      <button class="key-toggle" id="keyToggleBtn">Ayarla ▾</button>
+    </div>
+    <div class="key-body" id="keyBody">
+      <p>
+        API key'inizi <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>'dan alın.
+        Key yalnızca bu sekme oturumunda tutulur, hiçbir yere gönderilmez.
+      </p>
+      <div class="key-input-row">
+        <input class="key-input" id="keyInput" type="password" placeholder="AIzaSy..." autocomplete="off" />
+        <button class="key-save-btn" id="keySaveBtn" onclick="saveKey()">Kaydet</button>
+      </div>
+      <button class="key-clear-btn" onclick="clearKey()">Key'i Sil</button>
+    </div>
+  </div>
+
   <div class="input-wrap">
     <input class="url-field" id="urlInput" type="url" placeholder="https://" />
     <button class="go-btn" id="goBtn" onclick="handleSubmit()">Oluştur</button>
@@ -344,11 +487,57 @@
 </div>
 
 <script>
-// ─── BURAYA YENİ KEY'İNİZİ YAZIN ───────────────────────────────────────────
-const GEMINI_API_KEY = AIzaSyAHJaG71rgg3sgFkmG0-rhe8LbdVReFMkI;
-// ────────────────────────────────────────────────────────────────────────────
+// ─── API KEY YÖNETİMİ ───────────────────────────────────────────────────────
+// Key kod içinde YOK. Kullanıcı arayüzden girer, sessionStorage'da tutulur.
+// Sayfa kapanınca otomatik silinir. GitHub'a commit edilemez.
 
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+function getKey() {
+  return sessionStorage.getItem('gemini_api_key') || '';
+}
+
+function saveKey() {
+  const val = document.getElementById('keyInput').value.trim();
+  if (!val) { alert('Lütfen bir API key girin.'); return; }
+  sessionStorage.setItem('gemini_api_key', val);
+  document.getElementById('keyInput').value = '';
+  updateKeyUI(true);
+  const btn = document.getElementById('keySaveBtn');
+  btn.textContent = 'Kaydedildi ✓';
+  btn.classList.add('ok');
+  setTimeout(() => {
+    btn.textContent = 'Kaydet';
+    btn.classList.remove('ok');
+    document.getElementById('keyBody').classList.remove('open');
+    document.getElementById('keyToggleBtn').textContent = 'Değiştir ▾';
+  }, 1500);
+}
+
+function clearKey() {
+  sessionStorage.removeItem('gemini_api_key');
+  document.getElementById('keyInput').value = '';
+  updateKeyUI(false);
+}
+
+function updateKeyUI(hasKey) {
+  document.getElementById('keyDot').classList.toggle('active', hasKey);
+  document.getElementById('keyStatusText').textContent = hasKey ? '— aktif' : '— ayarlanmadı';
+}
+
+function toggleKeyPanel() {
+  const body = document.getElementById('keyBody');
+  const isOpen = body.classList.toggle('open');
+  document.getElementById('keyToggleBtn').textContent = isOpen
+    ? (getKey() ? 'Kapat ▴' : 'Kapat ▴')
+    : (getKey() ? 'Değiştir ▾' : 'Ayarla ▾');
+}
+
+// Sayfa yüklenince key var mı kontrol et
+updateKeyUI(!!getKey());
+if (!getKey()) {
+  document.getElementById('keyBody').classList.add('open');
+}
+
+// ─── UYGULAMA ───────────────────────────────────────────────────────────────
 
 let lastCopyText = '';
 
@@ -358,18 +547,30 @@ function tryExample(url) {
 }
 
 function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
+
 function setLoading(on) {
   document.getElementById('dot').classList.toggle('show', on);
   document.getElementById('goBtn').disabled = on;
 }
+
 function showError(msg) {
   const el = document.getElementById('errorBox');
   el.innerHTML = msg;
   el.classList.add('show');
 }
-function clearError() { document.getElementById('errorBox').classList.remove('show'); }
+
+function clearError() {
+  document.getElementById('errorBox').classList.remove('show');
+}
 
 async function handleSubmit() {
+  const apiKey = getKey();
+  if (!apiKey) {
+    showError('<strong>Hata:</strong> Önce Gemini API key\'inizi ayarlayın (yukarıdaki kutudan).');
+    document.getElementById('keyBody').classList.add('open');
+    return;
+  }
+
   const url = document.getElementById('urlInput').value.trim();
   if (!url || !url.startsWith('http')) {
     showError('Lütfen geçerli bir URL girin.');
@@ -382,19 +583,20 @@ async function handleSubmit() {
   setStatus('Sayfa içeriği alınıyor...');
 
   try {
-    // 1. CORS proxy ile sayfanın HTML'ini çek
+    // CORS proxy ile sayfanın HTML'ini çek
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
     let pageContent = '';
     try {
       const proxyRes = await fetch(proxyUrl);
       const proxyData = await proxyRes.json();
-      // Sadece ilk 8000 karakteri al (token limiti için)
       pageContent = (proxyData.contents || '').slice(0, 8000);
     } catch(e) {
       pageContent = '(Sayfa içeriği alınamadı, URL bilgisinden devam et)';
     }
 
     setStatus('Atıf oluşturuluyor...');
+
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const today = new Date().toLocaleDateString('tr-TR', {
       day: 'numeric', month: 'long', year: 'numeric'
@@ -458,7 +660,6 @@ Kurallar:
     const geminiData = await geminiRes.json();
     const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // JSON parse
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('Model geçerli bir yanıt döndürmedi. Lütfen tekrar deneyin.');
     const parsed = JSON.parse(jsonMatch[0]);
@@ -507,13 +708,12 @@ function renderResult(data) {
   document.getElementById('citeCard').innerHTML = html;
   lastCopyText = copyParts.join('\n\n');
 
-  // Meta bilgileri
   const d = data.detected || {};
   const items = [];
-  if (d.authors) items.push({ k: 'Yazar', v: d.authors });
-  if (d.title)   items.push({ k: 'Başlık', v: d.title });
-  if (d.year)    items.push({ k: 'Yıl', v: d.year });
-  if (d.publisher) items.push({ k: 'Yayıncı', v: d.publisher });
+  if (d.authors)   items.push({ k: 'Yazar',    v: d.authors });
+  if (d.title)     items.push({ k: 'Başlık',   v: d.title });
+  if (d.year)      items.push({ k: 'Yıl',      v: d.year });
+  if (d.publisher) items.push({ k: 'Yayıncı',  v: d.publisher });
 
   document.getElementById('metaGrid').innerHTML = items.map(m =>
     `<div class="meta-cell">
@@ -554,6 +754,10 @@ function copyAll() {
 
 document.getElementById('urlInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSubmit();
+});
+
+document.getElementById('keyInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveKey();
 });
 </script>
 </body>
