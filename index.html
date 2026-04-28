@@ -4,10 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chicago Atıf Oluşturucu</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
   :root {
     --bg: #0f0f0f;
@@ -44,7 +50,9 @@
     padding: 3.5rem 0 5rem;
   }
 
-  header { margin-bottom: 2.5rem; }
+  header {
+    margin-bottom: 2.5rem;
+  }
 
   .wordmark {
     display: flex;
@@ -79,7 +87,6 @@
     line-height: 1.6;
   }
 
-  /* ── API KEY SETUP PANEL ── */
   .key-panel {
     margin-bottom: 1.5rem;
     background: var(--surface);
@@ -98,7 +105,9 @@
     user-select: none;
   }
 
-  .key-panel-header:hover { background: var(--surface2); }
+  .key-panel-header:hover {
+    background: var(--surface2);
+  }
 
   .key-panel-left {
     display: flex;
@@ -108,15 +117,25 @@
   }
 
   .key-dot {
-    width: 8px; height: 8px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: var(--red);
     transition: background 0.2s;
   }
-  .key-dot.active { background: var(--green); }
 
-  .key-label { color: var(--text2); }
-  .key-status { color: var(--text3); font-size: 12px; }
+  .key-dot.active {
+    background: var(--green);
+  }
+
+  .key-label {
+    color: var(--text2);
+  }
+
+  .key-status {
+    color: var(--text3);
+    font-size: 12px;
+  }
 
   .key-toggle {
     font-size: 12px;
@@ -128,14 +147,20 @@
     border-radius: var(--radius-sm);
     font-family: 'DM Sans', sans-serif;
   }
-  .key-toggle:hover { color: var(--text2); }
+
+  .key-toggle:hover {
+    color: var(--text2);
+  }
 
   .key-body {
     display: none;
     padding: 0 16px 16px;
     border-top: 1px solid var(--border);
   }
-  .key-body.open { display: block; }
+
+  .key-body.open {
+    display: block;
+  }
 
   .key-body p {
     font-size: 12px;
@@ -144,8 +169,14 @@
     line-height: 1.5;
   }
 
-  .key-body a { color: var(--accent); text-decoration: none; }
-  .key-body a:hover { text-decoration: underline; }
+  .key-body a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .key-body a:hover {
+    text-decoration: underline;
+  }
 
   .key-input-row {
     display: flex;
@@ -165,8 +196,15 @@
     transition: border-color 0.15s;
     letter-spacing: 0.04em;
   }
-  .key-input:focus { border-color: rgba(255,255,255,0.25); }
-  .key-input::placeholder { color: var(--text3); letter-spacing: 0; }
+
+  .key-input:focus {
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .key-input::placeholder {
+    color: var(--text3);
+    letter-spacing: 0;
+  }
 
   .key-save-btn {
     font-family: 'DM Sans', sans-serif;
@@ -181,8 +219,16 @@
     transition: all 0.15s;
     white-space: nowrap;
   }
-  .key-save-btn:hover { border-color: rgba(255,255,255,0.25); }
-  .key-save-btn.ok { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+  .key-save-btn:hover {
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .key-save-btn.ok {
+    border-color: var(--green);
+    color: var(--green);
+    background: var(--green-bg);
+  }
 
   .key-clear-btn {
     font-family: 'DM Sans', sans-serif;
@@ -196,9 +242,12 @@
     margin-top: 8px;
     transition: all 0.15s;
   }
-  .key-clear-btn:hover { color: var(--red); border-color: rgba(192,84,58,0.3); }
 
-  /* ── MAIN FORM ── */
+  .key-clear-btn:hover {
+    color: var(--red);
+    border-color: rgba(192,84,58,0.3);
+  }
+
   .input-wrap {
     display: flex;
     gap: 8px;
@@ -218,8 +267,13 @@
     transition: border-color 0.15s;
   }
 
-  .url-field:focus { border-color: rgba(255,255,255,0.25); }
-  .url-field::placeholder { color: var(--text3); }
+  .url-field:focus {
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .url-field::placeholder {
+    color: var(--text3);
+  }
 
   .go-btn {
     font-family: 'DM Sans', sans-serif;
@@ -235,8 +289,14 @@
     white-space: nowrap;
   }
 
-  .go-btn:hover { opacity: 0.85; }
-  .go-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .go-btn:hover {
+    opacity: 0.85;
+  }
+
+  .go-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
 
   .status-bar {
     height: 32px;
@@ -249,14 +309,22 @@
   }
 
   .dot {
-    width: 6px; height: 6px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--accent);
     animation: pulse 1s ease-in-out infinite alternate;
     display: none;
   }
-  .dot.show { display: block; }
-  @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
+
+  .dot.show {
+    display: block;
+  }
+
+  @keyframes pulse {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+  }
 
   .error-box {
     display: none;
@@ -269,10 +337,19 @@
     color: #e88a74;
     line-height: 1.6;
   }
-  .error-box.show { display: block; }
 
-  .result { display: none; margin-top: 2rem; }
-  .result.show { display: block; }
+  .error-box.show {
+    display: block;
+  }
+
+  .result {
+    display: none;
+    margin-top: 2rem;
+  }
+
+  .result.show {
+    display: block;
+  }
 
   .result-header {
     display: flex;
@@ -305,8 +382,16 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-  .copy-all-btn:hover { border-color: var(--border2); color: var(--text); }
-  .copy-all-btn.ok { border-color: var(--green); color: var(--green); }
+
+  .copy-all-btn:hover {
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .copy-all-btn.ok {
+    border-color: var(--green);
+    color: var(--green);
+  }
 
   .cite-card {
     background: var(--surface);
@@ -320,7 +405,10 @@
     border-bottom: 1px solid var(--border);
     position: relative;
   }
-  .cite-block:last-child { border-bottom: none; }
+
+  .cite-block:last-child {
+    border-bottom: none;
+  }
 
   .cite-label {
     font-size: 10px;
@@ -338,13 +426,20 @@
     color: var(--text);
     padding-right: 48px;
   }
-  .cite-text em { font-style: italic; }
+
+  .cite-text em {
+    font-style: italic;
+  }
 
   .cite-copy {
     position: absolute;
-    top: 1.25rem; right: 1.2rem;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
+    top: 1.25rem;
+    right: 1.2rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -353,8 +448,17 @@
     font-size: 14px;
     transition: all 0.15s;
   }
-  .cite-copy:hover { border-color: var(--border2); color: var(--text); }
-  .cite-copy.ok { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+  .cite-copy:hover {
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .cite-copy.ok {
+    border-color: var(--green);
+    color: var(--green);
+    background: var(--green-bg);
+  }
 
   .meta-grid {
     display: grid;
@@ -369,13 +473,21 @@
     border-radius: var(--radius-sm);
     padding: 10px 12px;
   }
+
   .meta-cell .mk {
-    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--text3); margin-bottom: 3px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 3px;
   }
+
   .meta-cell .mv {
-    font-size: 13px; color: var(--text2);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: 13px;
+    color: var(--text2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .note-box {
@@ -384,7 +496,9 @@
     background: rgba(201,185,154,0.05);
     border: 1px solid rgba(201,185,154,0.15);
     border-radius: var(--radius-sm);
-    font-size: 12px; color: var(--text2); line-height: 1.5;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.5;
   }
 
   .examples {
@@ -392,27 +506,70 @@
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
   }
+
   .examples p {
-    font-size: 12px; color: var(--text3); margin-bottom: 10px;
-    letter-spacing: 0.04em; text-transform: uppercase;
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
   .chip {
-    font-size: 12px; font-family: 'DM Sans', sans-serif;
-    color: var(--text2); background: transparent;
-    border: 1px solid var(--border); border-radius: 99px;
-    padding: 5px 14px; cursor: pointer; transition: all 0.15s;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text2);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
   }
-  .chip:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
+
+  .chip:hover {
+    border-color: var(--border2);
+    color: var(--text);
+    background: var(--surface);
+  }
 
   footer {
     margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border);
-    font-size: 12px; color: var(--text3); line-height: 1.6;
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 560px) {
+    .wordmark {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .input-wrap {
+      flex-direction: column;
+    }
+
+    .key-input-row {
+      flex-direction: column;
+    }
+
+    .go-btn {
+      width: 100%;
+    }
   }
 </style>
 </head>
+
 <body>
 <div class="page">
 
@@ -421,10 +578,9 @@
       <h1>Chicago Atıf Oluşturucu</h1>
       <span class="tag">17. / 18. Baskı</span>
     </div>
-    <p>Kaynağın linkini yapıştırın &mdash; kaynak türünü otomatik tespit edip Chicago formatında kaynakça oluşturalım.</p>
+    <p>Kaynağın linkini yapıştırın — kaynak türünü otomatik tespit edip Chicago formatında kaynakça oluşturalım.</p>
   </header>
 
-  <!-- API KEY PANEL -->
   <div class="key-panel" id="keyPanel">
     <div class="key-panel-header" onclick="toggleKeyPanel()">
       <div class="key-panel-left">
@@ -432,24 +588,27 @@
         <span class="key-label">Gemini API Key</span>
         <span class="key-status" id="keyStatusText">— ayarlanmadı</span>
       </div>
-      <button class="key-toggle" id="keyToggleBtn">Ayarla ▾</button>
+      <button class="key-toggle" id="keyToggleBtn" type="button">Ayarla ▾</button>
     </div>
+
     <div class="key-body" id="keyBody">
       <p>
         API key'inizi <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>'dan alın.
-        Key yalnızca bu sekme oturumunda tutulur, hiçbir yere gönderilmez.
+        Key yalnızca bu sekme oturumunda tutulur. Sayfa kapanınca silinir.
       </p>
+
       <div class="key-input-row">
-        <input class="key-input" id="keyInput" type="password" placeholder="AIzaSy..." autocomplete="off" />
-        <button class="key-save-btn" id="keySaveBtn" onclick="saveKey()">Kaydet</button>
+        <input class="key-input" id="keyInput" type="password" placeholder="AIzaSy..." autocomplete="off">
+        <button class="key-save-btn" id="keySaveBtn" type="button" onclick="saveKey()">Kaydet</button>
       </div>
-      <button class="key-clear-btn" onclick="clearKey()">Key'i Sil</button>
+
+      <button class="key-clear-btn" type="button" onclick="clearKey()">Key'i Sil</button>
     </div>
   </div>
 
   <div class="input-wrap">
-    <input class="url-field" id="urlInput" type="url" placeholder="https://" />
-    <button class="go-btn" id="goBtn" onclick="handleSubmit()">Oluştur</button>
+    <input class="url-field" id="urlInput" type="url" placeholder="https://">
+    <button class="go-btn" id="goBtn" type="button" onclick="handleSubmit()">Oluştur</button>
   </div>
 
   <div class="status-bar">
@@ -462,8 +621,9 @@
   <div class="result" id="resultBox">
     <div class="result-header">
       <div class="type-chip" id="typeChip"></div>
-      <button class="copy-all-btn" id="copyAllBtn" onclick="copyAll()">Tümünü Kopyala</button>
+      <button class="copy-all-btn" id="copyAllBtn" type="button" onclick="copyAll()">Tümünü Kopyala</button>
     </div>
+
     <div class="cite-card" id="citeCard"></div>
     <div class="meta-grid" id="metaGrid"></div>
     <div class="note-box" id="noteBox" style="display:none;"></div>
@@ -472,11 +632,11 @@
   <div class="examples">
     <p>Örnek kaynaklar</p>
     <div class="chips">
-      <button class="chip" onclick="tryExample('https://www.nature.com/articles/d41586-024-00672-7')">Nature makalesi</button>
-      <button class="chip" onclick="tryExample('https://www.nytimes.com/2024/01/15/technology/ai-chatbots.html')">New York Times</button>
-      <button class="chip" onclick="tryExample('https://en.wikipedia.org/wiki/Artificial_intelligence')">Wikipedia</button>
-      <button class="chip" onclick="tryExample('https://www.jstor.org/stable/41812796')">JSTOR makalesi</button>
-      <button class="chip" onclick="tryExample('https://www.bbc.com/news/technology-68080089')">BBC Haber</button>
+      <button class="chip" type="button" onclick="tryExample('https://www.nature.com/articles/d41586-024-00672-7')">Nature makalesi</button>
+      <button class="chip" type="button" onclick="tryExample('https://www.nytimes.com/2024/01/15/technology/ai-chatbots.html')">New York Times</button>
+      <button class="chip" type="button" onclick="tryExample('https://en.wikipedia.org/wiki/Artificial_intelligence')">Wikipedia</button>
+      <button class="chip" type="button" onclick="tryExample('https://www.jstor.org/stable/41812796')">JSTOR makalesi</button>
+      <button class="chip" type="button" onclick="tryExample('https://www.bbc.com/news/technology-68080089')">BBC Haber</button>
     </div>
   </div>
 
@@ -487,26 +647,45 @@
 </div>
 
 <script>
-// ─── API KEY YÖNETİMİ ───────────────────────────────────────────────────────
-// Key kod içinde YOK. Kullanıcı arayüzden girer, sessionStorage'da tutulur.
-// Sayfa kapanınca otomatik silinir. GitHub'a commit edilemez.
+'use strict';
+
+/*
+  ÖNEMLİ:
+  GEMINI_URL değişkeni artık kullanılmıyor.
+  Böylece "Cannot access 'GEMINI_URL' before initialization" hatası engellenir.
+*/
+
+let lastCopyText = '';
+
+const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
 function getKey() {
   return sessionStorage.getItem('gemini_api_key') || '';
 }
 
 function saveKey() {
-  const val = document.getElementById('keyInput').value.trim();
-  if (!val) { alert('Lütfen bir API key girin.'); return; }
+  const input = document.getElementById('keyInput');
+  const val = input.value.trim();
+
+  if (!val) {
+    alert('Lütfen bir API key girin.');
+    return;
+  }
+
   sessionStorage.setItem('gemini_api_key', val);
-  document.getElementById('keyInput').value = '';
+  input.value = '';
+
   updateKeyUI(true);
+
   const btn = document.getElementById('keySaveBtn');
   btn.textContent = 'Kaydedildi ✓';
   btn.classList.add('ok');
+
   setTimeout(() => {
     btn.textContent = 'Kaydet';
     btn.classList.remove('ok');
+
     document.getElementById('keyBody').classList.remove('open');
     document.getElementById('keyToggleBtn').textContent = 'Değiştir ▾';
   }, 1500);
@@ -516,37 +695,36 @@ function clearKey() {
   sessionStorage.removeItem('gemini_api_key');
   document.getElementById('keyInput').value = '';
   updateKeyUI(false);
+
+  document.getElementById('keyBody').classList.add('open');
+  document.getElementById('keyToggleBtn').textContent = 'Kapat ▴';
 }
 
 function updateKeyUI(hasKey) {
   document.getElementById('keyDot').classList.toggle('active', hasKey);
   document.getElementById('keyStatusText').textContent = hasKey ? '— aktif' : '— ayarlanmadı';
+  document.getElementById('keyToggleBtn').textContent = hasKey ? 'Değiştir ▾' : 'Ayarla ▾';
 }
 
 function toggleKeyPanel() {
   const body = document.getElementById('keyBody');
   const isOpen = body.classList.toggle('open');
-  document.getElementById('keyToggleBtn').textContent = isOpen
-    ? (getKey() ? 'Kapat ▴' : 'Kapat ▴')
-    : (getKey() ? 'Değiştir ▾' : 'Ayarla ▾');
+
+  if (isOpen) {
+    document.getElementById('keyToggleBtn').textContent = 'Kapat ▴';
+  } else {
+    document.getElementById('keyToggleBtn').textContent = getKey() ? 'Değiştir ▾' : 'Ayarla ▾';
+  }
 }
-
-// Sayfa yüklenince key var mı kontrol et
-updateKeyUI(!!getKey());
-if (!getKey()) {
-  document.getElementById('keyBody').classList.add('open');
-}
-
-// ─── UYGULAMA ───────────────────────────────────────────────────────────────
-
-let lastCopyText = '';
 
 function tryExample(url) {
   document.getElementById('urlInput').value = url;
   handleSubmit();
 }
 
-function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
+function setStatus(msg) {
+  document.getElementById('statusText').textContent = msg;
+}
 
 function setLoading(on) {
   document.getElementById('dot').classList.toggle('show', on);
@@ -560,20 +738,60 @@ function showError(msg) {
 }
 
 function clearError() {
-  document.getElementById('errorBox').classList.remove('show');
+  const el = document.getElementById('errorBox');
+  el.innerHTML = '';
+  el.classList.remove('show');
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function italic(text) {
+  const safe = escapeHtml(text || '');
+  return safe.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
+function stripMarkdownItalic(text) {
+  return String(text || '').replace(/\*([^*]+)\*/g, '$1');
+}
+
+async function fetchPageContent(url) {
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+  try {
+    const proxyRes = await fetch(proxyUrl);
+
+    if (!proxyRes.ok) {
+      return '(Sayfa içeriği alınamadı, URL bilgisinden devam et.)';
+    }
+
+    const proxyData = await proxyRes.json();
+    return String(proxyData.contents || '').slice(0, 8000);
+  } catch (e) {
+    return '(Sayfa içeriği alınamadı, URL bilgisinden devam et.)';
+  }
 }
 
 async function handleSubmit() {
   const apiKey = getKey();
+
   if (!apiKey) {
-    showError('<strong>Hata:</strong> Önce Gemini API key\'inizi ayarlayın (yukarıdaki kutudan).');
+    showError('<strong>Hata:</strong> Önce Gemini API key&apos;inizi ayarlayın.');
     document.getElementById('keyBody').classList.add('open');
+    document.getElementById('keyToggleBtn').textContent = 'Kapat ▴';
     return;
   }
 
   const url = document.getElementById('urlInput').value.trim();
-  if (!url || !url.startsWith('http')) {
-    showError('Lütfen geçerli bir URL girin.');
+
+  if (!url || !/^https?:\/\//i.test(url)) {
+    showError('<strong>Hata:</strong> Lütfen geçerli bir URL girin.');
     return;
   }
 
@@ -583,100 +801,125 @@ async function handleSubmit() {
   setStatus('Sayfa içeriği alınıyor...');
 
   try {
-    // CORS proxy ile sayfanın HTML'ini çek
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    let pageContent = '';
-    try {
-      const proxyRes = await fetch(proxyUrl);
-      const proxyData = await proxyRes.json();
-      pageContent = (proxyData.contents || '').slice(0, 8000);
-    } catch(e) {
-      pageContent = '(Sayfa içeriği alınamadı, URL bilgisinden devam et)';
-    }
+    const pageContent = await fetchPageContent(url);
 
     setStatus('Atıf oluşturuluyor...');
 
-    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const geminiUrl = `${GEMINI_ENDPOINT}${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
     const today = new Date().toLocaleDateString('tr-TR', {
-      day: 'numeric', month: 'long', year: 'numeric'
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
 
-    const prompt = `Sen bir akademik atıf uzmanısın. Aşağıdaki URL ve sayfa içeriğini analiz et.
+    const prompt = `
+Sen bir akademik atıf uzmanısın. Aşağıdaki URL ve sayfa içeriğini analiz et.
 
-URL: ${url}
+URL:
+${url}
 
-SAYFA İÇERİĞİ (HTML):
+SAYFA İÇERİĞİ:
 ${pageContent}
 
-Görev: Chicago Manual of Style (17./18. baskı) formatında kaynakça oluştur.
+Görev:
+Chicago Manual of Style 17./18. baskı formatında kaynakça oluştur.
 
 HTML içeriğinden şunları çıkar:
-- Yazar adı (meta author, byline, schema.org author, article:author vb.)
-- Başlık (title, og:title, h1 vb.)
-- Yayın tarihi (meta date, article:published_time, datePublished vb.)
-- Yayıncı / site adı (og:site_name, publisher vb.)
-- Dergi/cilt/sayı bilgisi (varsa)
-- DOI (varsa)
+- Yazar adı
+- Başlık
+- Yayın tarihi
+- Yayıncı / site adı
+- Dergi, cilt, sayı bilgisi
+- DOI
+- URL
 
-Kaynak türünü belirle: akademik makale, haber, web sayfası, kitap bölümü, dergi makalesi, blog yazısı vb.
+Kaynak türünü belirle:
+akademik makale, haber, web sayfası, kitap bölümü, dergi makalesi, blog yazısı vb.
 
-SADECE aşağıdaki JSON formatında yanıt ver, başka hiçbir şey yazma, markdown kod bloğu kullanma:
+SADECE aşağıdaki JSON formatında yanıt ver.
+Başka hiçbir şey yazma.
+Markdown kod bloğu kullanma.
 
 {
-  "type": "Kaynak türü Türkçe (ör: Dergi Makalesi, Haber, Web Sayfası)",
-  "bibliography": "Chicago N&B kaynakça girişi — kitap/dergi adlarını *yıldız* içine al, makale başlıklarını çift tırnak içine al",
-  "author_date": "Yazar-Tarih stili kaynakça girişi",
+  "type": "Kaynak türü Türkçe",
+  "bibliography": "Chicago Notes and Bibliography kaynakça girişi",
+  "author_date": "Chicago Author-Date kaynakça girişi",
   "detected": {
     "authors": "Yazar(lar) veya boş string",
-    "title": "Başlık",
+    "title": "Başlık veya boş string",
     "year": "Yıl veya boş string",
-    "publisher": "Yayıncı/Site"
+    "publisher": "Yayıncı/Site veya boş string"
   },
   "note": "Eksik bilgi varsa kısa not, yoksa boş string"
 }
 
 Kurallar:
-- Kitap/dergi adları: *İtalik Ad* (yıldız işareti kullan)
-- Makale/bölüm başlıkları: "Çift Tırnak İçinde"
-- URL'yi kaynakça sonuna ekle
-- Erişim tarihi: ${today}
-- Yazar bulunamazsa "N.a." veya site adını kullan`;
+- Kitap, dergi ve site adlarını *yıldız* içine al.
+- Makale, bölüm ve haber başlıklarını çift tırnak içine al.
+- URL'yi kaynakça sonuna ekle.
+- Gerekirse erişim tarihi kullan: ${today}.
+- Yazar bulunamazsa site adını veya kurum adını kullan.
+- Uydurma yazar, tarih, DOI veya dergi bilgisi ekleme.
+`;
 
-    const geminiRes = await fetch(GEMINI_URL, {
+    const geminiRes = await fetch(geminiUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 1024 }
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 1200
+        }
       })
     });
 
     if (!geminiRes.ok) {
       const errData = await geminiRes.json().catch(() => ({}));
-      throw new Error(errData.error?.message || `Gemini API hatası: HTTP ${geminiRes.status}`);
+      const apiMessage = errData.error && errData.error.message
+        ? errData.error.message
+        : `Gemini API hatası: HTTP ${geminiRes.status}`;
+
+      throw new Error(apiMessage);
     }
 
     const geminiData = await geminiRes.json();
-    const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('Model geçerli bir yanıt döndürmedi. Lütfen tekrar deneyin.');
-    const parsed = JSON.parse(jsonMatch[0]);
+
+    if (!jsonMatch) {
+      throw new Error('Model geçerli JSON yanıtı döndürmedi. Lütfen tekrar deneyin.');
+    }
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(jsonMatch[0]);
+    } catch (e) {
+      throw new Error('Model yanıtı JSON olarak okunamadı. Lütfen tekrar deneyin.');
+    }
 
     renderResult(parsed);
     setStatus('');
 
-  } catch(err) {
-    showError('<strong>Hata:</strong> ' + (err.message || 'Bilinmeyen hata.'));
+  } catch (err) {
+    showError('<strong>Hata:</strong> ' + escapeHtml(err.message || 'Bilinmeyen hata.'));
     setStatus('');
   } finally {
     setLoading(false);
   }
-}
-
-function italic(text) {
-  return (text || '').replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
 
 function renderResult(data) {
@@ -686,43 +929,68 @@ function renderResult(data) {
   const copyParts = [];
 
   if (data.bibliography) {
-    const plain = (data.bibliography || '').replace(/\*([^*]+)\*/g, '$1');
+    const plain = stripMarkdownItalic(data.bibliography);
     copyParts.push('Notlar & Kaynakça:\n' + plain);
-    html += `<div class="cite-block">
-      <div class="cite-label">Notlar &amp; Kaynakça</div>
-      <div class="cite-text">${italic(data.bibliography)}</div>
-      <button class="cite-copy" onclick="copyCite(this, ${JSON.stringify(plain)})" title="Kopyala">⎘</button>
-    </div>`;
+
+    html += `
+      <div class="cite-block">
+        <div class="cite-label">Notlar &amp; Kaynakça</div>
+        <div class="cite-text">${italic(data.bibliography)}</div>
+        <button class="cite-copy" type="button" onclick="copyCite(this, ${JSON.stringify(plain)})" title="Kopyala">⎘</button>
+      </div>
+    `;
   }
 
   if (data.author_date) {
-    const plain = (data.author_date || '').replace(/\*([^*]+)\*/g, '$1');
+    const plain = stripMarkdownItalic(data.author_date);
     copyParts.push('Yazar-Tarih Stili:\n' + plain);
-    html += `<div class="cite-block">
-      <div class="cite-label">Yazar-Tarih Stili</div>
-      <div class="cite-text">${italic(data.author_date)}</div>
-      <button class="cite-copy" onclick="copyCite(this, ${JSON.stringify(plain)})" title="Kopyala">⎘</button>
-    </div>`;
+
+    html += `
+      <div class="cite-block">
+        <div class="cite-label">Yazar-Tarih Stili</div>
+        <div class="cite-text">${italic(data.author_date)}</div>
+        <button class="cite-copy" type="button" onclick="copyCite(this, ${JSON.stringify(plain)})" title="Kopyala">⎘</button>
+      </div>
+    `;
   }
 
-  document.getElementById('citeCard').innerHTML = html;
+  document.getElementById('citeCard').innerHTML = html || `
+    <div class="cite-block">
+      <div class="cite-label">Sonuç</div>
+      <div class="cite-text">Kaynakça oluşturulamadı.</div>
+    </div>
+  `;
+
   lastCopyText = copyParts.join('\n\n');
 
   const d = data.detected || {};
   const items = [];
-  if (d.authors)   items.push({ k: 'Yazar',    v: d.authors });
-  if (d.title)     items.push({ k: 'Başlık',   v: d.title });
-  if (d.year)      items.push({ k: 'Yıl',      v: d.year });
-  if (d.publisher) items.push({ k: 'Yayıncı',  v: d.publisher });
 
-  document.getElementById('metaGrid').innerHTML = items.map(m =>
-    `<div class="meta-cell">
-      <div class="mk">${m.k}</div>
-      <div class="mv" title="${m.v}">${m.v}</div>
-    </div>`
-  ).join('');
+  if (d.authors) {
+    items.push({ k: 'Yazar', v: d.authors });
+  }
+
+  if (d.title) {
+    items.push({ k: 'Başlık', v: d.title });
+  }
+
+  if (d.year) {
+    items.push({ k: 'Yıl', v: d.year });
+  }
+
+  if (d.publisher) {
+    items.push({ k: 'Yayıncı', v: d.publisher });
+  }
+
+  document.getElementById('metaGrid').innerHTML = items.map(m => `
+    <div class="meta-cell">
+      <div class="mk">${escapeHtml(m.k)}</div>
+      <div class="mv" title="${escapeHtml(m.v)}">${escapeHtml(m.v)}</div>
+    </div>
+  `).join('');
 
   const noteBox = document.getElementById('noteBox');
+
   if (data.note) {
     noteBox.textContent = '⚠ ' + data.note;
     noteBox.style.display = 'block';
@@ -731,34 +999,62 @@ function renderResult(data) {
   }
 
   document.getElementById('resultBox').classList.add('show');
-  document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('resultBox').scrollIntoView({
+    behavior: 'smooth',
+    block: 'nearest'
+  });
 }
 
 function copyCite(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✓';
     btn.classList.add('ok');
-    setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('ok'); }, 2000);
+
+    setTimeout(() => {
+      btn.textContent = '⎘';
+      btn.classList.remove('ok');
+    }, 2000);
   });
 }
 
 function copyAll() {
-  if (!lastCopyText) return;
+  if (!lastCopyText) {
+    return;
+  }
+
   navigator.clipboard.writeText(lastCopyText).then(() => {
     const btn = document.getElementById('copyAllBtn');
     btn.textContent = 'Kopyalandı ✓';
     btn.classList.add('ok');
-    setTimeout(() => { btn.textContent = 'Tümünü Kopyala'; btn.classList.remove('ok'); }, 2500);
+
+    setTimeout(() => {
+      btn.textContent = 'Tümünü Kopyala';
+      btn.classList.remove('ok');
+    }, 2500);
   });
 }
 
-document.getElementById('urlInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') handleSubmit();
-});
+document.addEventListener('DOMContentLoaded', () => {
+  updateKeyUI(!!getKey());
 
-document.getElementById('keyInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') saveKey();
+  if (!getKey()) {
+    document.getElementById('keyBody').classList.add('open');
+    document.getElementById('keyToggleBtn').textContent = 'Kapat ▴';
+  }
+
+  document.getElementById('urlInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  });
+
+  document.getElementById('keyInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      saveKey();
+    }
+  });
 });
 </script>
+
 </body>
 </html>
