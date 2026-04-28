@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chicago Atıf Oluşturucu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --text2: #a09a93;
+    --text3: #635e59;
+    --accent: #c9b99a;
+    --green: #3d7a5e;
+    --green-bg: #1a2e25;
+    --red: #c0543a;
+    --red-bg: #2a1510;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 680px;
+    padding: 3.5rem 0 5rem;
+  }
+
+  header { margin-bottom: 2.5rem; }
+
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .wordmark h1 {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .wordmark .tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(201,185,154,0.3);
+    border-radius: 99px;
+    padding: 2px 8px;
+  }
+
+  header p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .input-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .url-field {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 13px 16px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .url-field:focus { border-color: rgba(255,255,255,0.25); }
+  .url-field::placeholder { color: var(--text3); }
+
+  .go-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 13px 24px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  .go-btn:hover { opacity: 0.85; }
+  .go-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .status-bar {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1s ease-in-out infinite alternate;
+    display: none;
+  }
+  .dot.show { display: block; }
+  @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
+
+  .error-box {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: var(--red-bg);
+    border: 1px solid rgba(192,84,58,0.3);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: #e88a74;
+    line-height: 1.6;
+  }
+  .error-box.show { display: block; }
+
+  .result { display: none; margin-top: 2rem; }
+  .result.show { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .type-chip {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 99px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+
+  .copy-all-btn {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text2);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-all-btn:hover { border-color: var(--border2); color: var(--text); }
+  .copy-all-btn.ok { border-color: var(--green); color: var(--green); }
+
+  .cite-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .cite-block {
+    padding: 1.25rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .cite-block:last-child { border-bottom: none; }
+
+  .cite-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+
+  .cite-text {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text);
+    padding-right: 48px;
+  }
+  .cite-text em { font-style: italic; }
+
+  .cite-copy {
+    position: absolute;
+    top: 1.25rem; right: 1.2rem;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .cite-copy:hover { border-color: var(--border2); color: var(--text); }
+  .cite-copy.ok { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .meta-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+  .meta-cell .mk {
+    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 3px;
+  }
+  .meta-cell .mv {
+    font-size: 13px; color: var(--text2);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .note-box {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(201,185,154,0.05);
+    border: 1px solid rgba(201,185,154,0.15);
+    border-radius: var(--radius-sm);
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+  }
+
+  .examples {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .examples p {
+    font-size: 12px; color: var(--text3); margin-bottom: 10px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 12px; font-family: 'DM Sans', sans-serif;
+    color: var(--text2); background: transparent;
+    border: 1px solid var(--border); border-radius: 99px;
+    padding: 5px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text3); line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="wordmark">
+      <h1>Chicago Atıf Oluşturucu</h1>
+      <span class="tag">17. / 18. Baskı</span>
+    </div>
+    <p>Kaynağın linkini yapıştırın &mdash; kaynak türünü otomatik tespit edip Chicago formatında kaynakça oluşturalım.</p>
+  </header>
+
+  <div class="input-wrap">
+    <input class="url-field" id="urlInput" type="url" placeholder="https://" />
+    <button class="go-btn" id="goBtn" onclick="handleSubmit()">Oluştur</button>
+  </div>
+
+  <div class="status-bar">
+    <div class="dot" id="dot"></div>
+    <span id="statusText"></span>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="result" id="resultBox">
+    <div class="result-header">
+      <div class="type-chip" id="typeChip"></div>
+      <button class="copy-all-btn" id="copyAllBtn" onclick="copyAll()">Tümünü Kopyala</button>
+    </div>
+    <div class="cite-card" id="citeCard"></div>
+    <div class="meta-grid" id="metaGrid"></div>
+    <div class="note-box" id="noteBox" style="display:none;"></div>
+  </div>
+
+  <div class="examples">
+    <p>Örnek kaynaklar</p>
+    <div class="chips">
+      <button class="chip" onclick="tryExample('https://www.nature.com/articles/d41586-024-00672-7')">Nature makalesi</button>
+      <button class="chip" onclick="tryExample('https://www.nytimes.com/2024/01/15/technology/ai-chatbots.html')">New York Times</button>
+      <button class="chip" onclick="tryExample('https://en.wikipedia.org/wiki/Artificial_intelligence')">Wikipedia</button>
+      <button class="chip" onclick="tryExample('https://www.jstor.org/stable/41812796')">JSTOR makalesi</button>
+      <button class="chip" onclick="tryExample('https://www.bbc.com/news/technology-68080089')">BBC Haber</button>
+    </div>
+  </div>
+
+  <footer>
+    Chicago Manual of Style 17. ve 18. baskı kurallarına göre oluşturulur. Akademik çalışmalarda atıfları her zaman kendiniz doğrulayın.
+  </footer>
+
+</div>
+
+<script>
+// ─── BURAYA YENİ KEY'İNİZİ YAZIN ───────────────────────────────────────────
+const GEMINI_API_KEY = 'AIzaSyAHJaG71rgg3sgFkmG0-rhe8LbdVReFMkI';
+// ────────────────────────────────────────────────────────────────────────────
+
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+let lastCopyText = '';
+
+function tryExample(url) {
+  document.getElementById('urlInput').value = url;
+  handleSubmit();
+}
+
+function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
+function setLoading(on) {
+  document.getElementById('dot').classList.toggle('show', on);
+  document.getElementById('goBtn').disabled = on;
+}
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.innerHTML = msg;
+  el.classList.add('show');
+}
+function clearError() { document.getElementById('errorBox').classList.remove('show'); }
+
+async function handleSubmit() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url || !url.startsWith('http')) {
+    showError('Lütfen geçerli bir URL girin.');
+    return;
+  }
+
+  clearError();
+  document.getElementById('resultBox').classList.remove('show');
+  setLoading(true);
+  setStatus('Sayfa içeriği alınıyor...');
+
+  try {
+    // 1. CORS proxy ile sayfanın HTML'ini çek
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    let pageContent = '';
+    try {
+      const proxyRes = await fetch(proxyUrl);
+      const proxyData = await proxyRes.json();
+      // Sadece ilk 8000 karakteri al (token limiti için)
+      pageContent = (proxyData.contents || '').slice(0, 8000);
+    } catch(e) {
+      pageContent = '(Sayfa içeriği alınamadı, URL bilgisinden devam et)';
+    }
+
+    setStatus('Atıf oluşturuluyor...');
+
+    const today = new Date().toLocaleDateString('tr-TR', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    const prompt = `Sen bir akademik atıf uzmanısın. Aşağıdaki URL ve sayfa içeriğini analiz et.
+
+URL: ${url}
+
+SAYFA İÇERİĞİ (HTML):
+${pageContent}
+
+Görev: Chicago Manual of Style (17./18. baskı) formatında kaynakça oluştur.
+
+HTML içeriğinden şunları çıkar:
+- Yazar adı (meta author, byline, schema.org author, article:author vb.)
+- Başlık (title, og:title, h1 vb.)
+- Yayın tarihi (meta date, article:published_time, datePublished vb.)
+- Yayıncı / site adı (og:site_name, publisher vb.)
+- Dergi/cilt/sayı bilgisi (varsa)
+- DOI (varsa)
+
+Kaynak türünü belirle: akademik makale, haber, web sayfası, kitap bölümü, dergi makalesi, blog yazısı vb.
+
+SADECE aşağıdaki JSON formatında yanıt ver, başka hiçbir şey yazma, markdown kod bloğu kullanma:
+
+{
+  "type": "Kaynak türü Türkçe (ör: Dergi Makalesi, Haber, Web Sayfası)",
+  "bibliography": "Chicago N&B kaynakça girişi — kitap/dergi adlarını *yıldız* içine al, makale başlıklarını çift tırnak içine al",
+  "author_date": "Yazar-Tarih stili kaynakça girişi",
+  "detected": {
+    "authors": "Yazar(lar) veya boş string",
+    "title": "Başlık",
+    "year": "Yıl veya boş string",
+    "publisher": "Yayıncı/Site"
+  },
+  "note": "Eksik bilgi varsa kısa not, yoksa boş string"
+}
+
+Kurallar:
+- Kitap/dergi adları: *İtalik Ad* (yıldız işareti kullan)
+- Makale/bölüm başlıkları: "Çift Tırnak İçinde"
+- URL'yi kaynakça sonuna ekle
+- Erişim tarihi: ${today}
+- Yazar bulunamazsa "N.a." veya site adını kullan`;
+
+    const geminiRes = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.1, maxOutputTokens: 1024 }
+      })
+    });
+
+    if (!geminiRes.ok) {
+      const errData = await geminiRes.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `Gemini API hatası: HTTP ${geminiRes.status}`);
+    }
+
+    const geminiData = await geminiRes.json();
+    const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    // JSON parse
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Model geçerli bir yanıt döndürmedi. Lütfen tekrar deneyin.');
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    renderResult(parsed);
+    setStatus('');
+
+  } catch(err) {
+    showError('<strong>Hata:</strong> ' + (err.message || 'Bilinmeyen hata.'));
+    setStatus('');
+  } finally {
+    setLoading(false);
+  }
+}
+
+function italic(text) {
+  return (text || '').replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
+function renderResult(data) {
+  document.getElementById('typeChip').textContent = data.type || 'Kaynak';
+
+  let html = '';
+  const copyParts = [];
+
+  if (data.bibliography) {
+    const plain = (data.bibliography || '').replace(/\*([^*]+)\*/g, '$1');
+    copyParts.push('Notlar & Kaynakça:\n' + plain);
+    html += `<div class="cite-block">
+      <div class="cite-label">Notlar &amp; Kaynakça</div>
+      <div class="cite-text">${italic(data.bibliography)}</div>
+      <button class="cite-copy" onclick="copyCite(this, ${JSON.stringify(plain)})" title="Kopyala">⎘</button>
+    </div>`;
+  }
+
+  if (data.author_date) {
+    const plain = (data.author_date || '').replace(/\*([^*]+)\*/g, '$1');
+    copyParts.push('Yazar-Tarih Stili:\n' + plain);
+    html += `<div class="cite-block">
+      <div class="cite-label">Yazar-Tarih Stili</div>
+      <div class="cite-text">${italic(data.author_date)}</div>
+      <button class="cite-copy" onclick="copyCite(this, ${JSON.stringify(plain)})" title="Kopyala">⎘</button>
+    </div>`;
+  }
+
+  document.getElementById('citeCard').innerHTML = html;
+  lastCopyText = copyParts.join('\n\n');
+
+  // Meta bilgileri
+  const d = data.detected || {};
+  const items = [];
+  if (d.authors) items.push({ k: 'Yazar', v: d.authors });
+  if (d.title)   items.push({ k: 'Başlık', v: d.title });
+  if (d.year)    items.push({ k: 'Yıl', v: d.year });
+  if (d.publisher) items.push({ k: 'Yayıncı', v: d.publisher });
+
+  document.getElementById('metaGrid').innerHTML = items.map(m =>
+    `<div class="meta-cell">
+      <div class="mk">${m.k}</div>
+      <div class="mv" title="${m.v}">${m.v}</div>
+    </div>`
+  ).join('');
+
+  const noteBox = document.getElementById('noteBox');
+  if (data.note) {
+    noteBox.textContent = '⚠ ' + data.note;
+    noteBox.style.display = 'block';
+  } else {
+    noteBox.style.display = 'none';
+  }
+
+  document.getElementById('resultBox').classList.add('show');
+  document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyCite(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+function copyAll() {
+  if (!lastCopyText) return;
+  navigator.clipboard.writeText(lastCopyText).then(() => {
+    const btn = document.getElementById('copyAllBtn');
+    btn.textContent = 'Kopyalandı ✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Tümünü Kopyala'; btn.classList.remove('ok'); }, 2500);
+  });
+}
+
+document.getElementById('urlInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSubmit();
+});
+</script>
+</body>
+</html>
