@@ -649,16 +649,18 @@
 <script>
 'use strict';
 
-/*
-  ÖNEMLİ:
-  GEMINI_URL değişkeni artık kullanılmıyor.
-  Böylece "Cannot access 'GEMINI_URL' before initialization" hatası engellenir.
-*/
-
 let lastCopyText = '';
 
-const GEMINI_MODEL = 'gemini-1.5-flash';
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/';
+/*
+  Model hatası çözümü:
+  Eski model: gemini-1.5-flash
+  Yeni model: gemini-2.0-flash
+  Eski endpoint: /v1beta/
+  Yeni endpoint: /v1/
+*/
+
+const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1/models/';
 
 function getKey() {
   return sessionStorage.getItem('gemini_api_key') || '';
